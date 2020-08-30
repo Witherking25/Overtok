@@ -1,0 +1,168 @@
+package com.withertech.overtok;
+
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import org.ini4j.Ini;
+import org.ini4j.InvalidFileFormatException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Root
+{
+    private JPanel rootPanel;
+    private JTextField User1TextField;
+    private JTextField User2TextField;
+    private JList UserFollowerOverlapList;
+    private JLabel User1Label;
+    private JLabel User2Label;
+    private JScrollBar ScrollBar;
+    private JScrollPane ScrollPane;
+    private JButton UserFollowerOverlapButton;
+    private JPanel constraintPanel;
+    private JLabel OverlapListStatus;
+    private Ini ini;
+
+    public Root()
+    {
+        UserFollowerOverlapButton.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                if (!(User1TextField.getText().isEmpty() && User2TextField.getText().isEmpty()))
+                {
+                    try
+                    {
+                        ini = new Ini(new File(System.getProperty("user.dir") + "/overtok.ini"));
+                        HttpResponse<JsonNode> response1 = Unirest.get("https://tiktok.p.rapidapi.com/live/user/follower/list?username=" + User1TextField.getText() + "&max_cursor=0&limit=200")
+                                .header("x-rapidapi-host", "tiktok.p.rapidapi.com")
+                                .header("x-rapidapi-key", ini.get("Keys", "ApiKey"))
+                                .asJson();
+                        HttpResponse<JsonNode> response2 = Unirest.get("https://tiktok.p.rapidapi.com/live/user/follower/list?username=" + User2TextField.getText() + "&max_cursor=0&limit=200")
+                                .header("x-rapidapi-host", "tiktok.p.rapidapi.com")
+                                .header("x-rapidapi-key", ini.get("Keys", "ApiKey"))
+                                .asJson();
+                        String json1 = response1.getBody().toString();
+                        String json2 = response2.getBody().toString();
+                        JSONObject root1 = new JSONObject(json1);
+                        JSONObject root2 = new JSONObject(json2);
+                        if (root1.has("followers") && root2.has("followers"))
+                        {
+                            JSONArray followers1 = root1.getJSONArray("followers");
+                            JSONArray followers2 = root2.getJSONArray("followers");
+                            List<String> overlappedFollowersList = new ArrayList<String>();
+                            for (int i1 = 0; i1 < followers1.length(); i1++)
+                            {
+                                for (int i2 = 0; i2 < followers1.length(); i2++)
+                                {
+                                    if (followers1.getJSONObject(i1).getString("unique_id").equals(followers2.getJSONObject(i2).getString("unique_id")))
+                                    {
+                                        overlappedFollowersList.add(followers1.getJSONObject(i1).getString("unique_id"));
+                                    }
+                                }
+                            }
+                            UserFollowerOverlapList.setListData(overlappedFollowersList.toArray());
+                            OverlapListStatus.setText("Total Amount of Overlapping Followers: " + overlappedFollowersList.size());
+                        }
+
+                    } catch (UnirestException | JSONException | IOException ee)
+                    {
+                        ee.printStackTrace();
+                    }
+                }
+                else
+                {
+                    OverlapListStatus.setText("Error: Missing inputs");
+                }
+
+
+            }
+        });
+    }
+
+    public static void main(String[] args)
+    {
+        try
+        {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); //Windows Look and feel
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e)
+        {
+            e.printStackTrace();
+        }
+        JFrame frame = new JFrame("Overtok");
+        frame.setContentPane(new Root().rootPanel);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+    }
+
+    {
+// GUI initializer generated by IntelliJ IDEA GUI Designer
+// >>> IMPORTANT!! <<<
+// DO NOT EDIT OR ADD ANY CODE HERE!
+        $$$setupUI$$$();
+    }
+
+    /**
+     * Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     *
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$()
+    {
+        rootPanel = new JPanel();
+        rootPanel.setLayout(new GridLayoutManager(6, 2, new Insets(0, 0, 0, 0), -1, -1));
+        constraintPanel = new JPanel();
+        constraintPanel.setLayout(new GridLayoutManager(7, 3, new Insets(0, 0, 0, 0), -1, -1));
+        rootPanel.add(constraintPanel, new GridConstraints(0, 0, 6, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, new Dimension(500, 500), 0, false));
+        User1Label = new JLabel();
+        User1Label.setText("User 1 Name");
+        constraintPanel.add(User1Label, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        User1TextField = new JTextField();
+        constraintPanel.add(User1TextField, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        User2Label = new JLabel();
+        User2Label.setText("User 2 Name");
+        constraintPanel.add(User2Label, new GridConstraints(2, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        User2TextField = new JTextField();
+        constraintPanel.add(User2TextField, new GridConstraints(3, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        ScrollPane = new JScrollPane();
+        constraintPanel.add(ScrollPane, new GridConstraints(6, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        UserFollowerOverlapList = new JList();
+        ScrollPane.setViewportView(UserFollowerOverlapList);
+        ScrollBar = new JScrollBar();
+        constraintPanel.add(ScrollBar, new GridConstraints(6, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        UserFollowerOverlapButton = new JButton();
+        UserFollowerOverlapButton.setText("Start");
+        constraintPanel.add(UserFollowerOverlapButton, new GridConstraints(4, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        OverlapListStatus = new JLabel();
+        OverlapListStatus.setText("Ready");
+        constraintPanel.add(OverlapListStatus, new GridConstraints(5, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        ScrollPane.setVerticalScrollBar(ScrollBar);
+    }
+
+    /**
+     * @noinspection ALL
+     */
+    public JComponent $$$getRootComponent$$$()
+    {
+        return rootPanel;
+    }
+
+}
