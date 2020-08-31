@@ -25,6 +25,7 @@ OutputDir=C:\Users\Aaron\Documents\Overtok\target
 OutputBaseFilename=OvertokSetup
 Compression=lzma
 SolidCompression=yes
+DisableWelcomePage=False
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -48,28 +49,6 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 var
   ApiKeyPage: TInputQueryWizardPage;
 
-procedure InitializeWizard();
-var
-  Link: TLabel;
-begin
-  ApiKeyPage :=
-    CreateInputQueryPage(wpWelcome,
-    'Tik Tok Api Key', 
-    '',
-    'Please Enter Your Tik Tok Api Key That Can Be Purchased At: https://rapidapi.com/logicbuilder/api/tiktok/pricing');
-    Link := TLabel.Create(WizardForm);
-    Link.Left := ???;
-    Link.Top := ???;
-    Link.Parent := WizardForm.WelcomePage;
-    Link.Caption := 'CLICK_HERE';
-    Link.OnClick := @LinkClick;
-    Link.ParentFont := True;
-    Link.Font.Style := Link.Font.Style + [fsUnderline, fsBold];
-    Link.Font.Color := clBlue;
-    Link.Cursor := crHand;
-  ApiKeyPage.Add('Tik Tok Api Key:', true);
-end;
-
 function ApiKey(): string;
 begin
   Result := ApiKeyPage.Values[0];
@@ -84,7 +63,7 @@ end;
 
 procedure LinkClick(Sender: TObject);
 begin
-  OpenBrowser('https://www.example.com/');
+  OpenBrowser('https://rapidapi.com/logicbuilder/api/tiktok/pricing');
 end;
 
 procedure PrepareIniFileForCopy(section, key, value, iniFileTemp, iniFileTarget:String);
@@ -103,4 +82,26 @@ begin
     PrepareIniFileForCopy('Keys', 'ApiKey', ApiKey(), ExpandConstant('{tmp}\overtok.ini'), ExpandConstant('{app}\overtok.ini'));
 
   end;
+end;
+
+procedure InitializeWizard();
+var
+  Link: TLabel;
+begin
+  ApiKeyPage :=
+    CreateInputQueryPage(wpWelcome,
+    'Tik Tok Api Key',
+    '',
+    'Please Enter Your Tik Tok Api Key That Can Be Purchased At: ');
+  Link := TLabel.Create(WizardForm);
+  Link.Parent := ApiKeyPage.Surface;
+  Link.Left := 0
+  Link.Top := 11
+  Link.Caption := 'https://rapidapi.com/logicbuilder/api/tiktok/pricing';
+  Link.OnClick := @LinkClick;
+  Link.ParentFont := True;
+  Link.Font.Style := Link.Font.Style + [fsUnderline, fsBold];
+  Link.Font.Color := clBlue;
+  Link.Cursor := crHand;
+  ApiKeyPage.Add('Tik Tok Api Key:', true);
 end;

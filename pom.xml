@@ -66,12 +66,13 @@
                 <configuration>
                     <fork>true</fork>
                     <debug>true</debug>
-                    <failOnError>true</failOnError>
+                    <failOnError>false</failOnError>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
+                <version>1.7.25</version>
                 <executions>
                     <execution>
                         <id>l4j-clui</id>
@@ -127,6 +128,28 @@
                     </arguments>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.ragedunicorn.tools.maven</groupId>
+                <artifactId>github-release-maven-plugin</artifactId>
+                <version>1.0.2</version>
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <configuration>
+                            <server>github-oauth</server>
+                            <owner>withertech</owner>
+                            <repository>Overtok</repository>
+                            <tagName>v1.0.0.0</tagName>
+                            <name>Initial Release</name>
+                            <targetCommitish>master</targetCommitish>
+                            <body>Initial Release</body>
+                            <assets>
+                                <asset>target/OvertokSetup.exe</asset>
+                            </assets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <properties>
@@ -135,6 +158,17 @@
 
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.ragedunicorn.tools.maven</groupId>
+            <artifactId>github-release-maven-plugin</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.0.0</version>
+        </dependency>
         <dependency>
             <groupId>com.intellij</groupId>
             <artifactId>forms_rt</artifactId>
