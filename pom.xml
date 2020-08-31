@@ -95,12 +95,12 @@
                                 </opts>
                             </jre>
                             <versionInfo>
-                                <fileVersion>1.0.0.0</fileVersion>
-                                <txtFileVersion>1.0.0.0</txtFileVersion>
+                                <fileVersion>1.1.1.0</fileVersion>
+                                <txtFileVersion>1.1.1.0</txtFileVersion>
                                 <fileDescription>Tik Tok follower overlap scraper</fileDescription>
                                 <copyright>none</copyright>
-                                <productVersion>1.0.0.0</productVersion>
-                                <txtProductVersion>1.0.0.0</txtProductVersion>
+                                <productVersion>1.1.1.0</productVersion>
+                                <txtProductVersion>1.1.1.0</txtProductVersion>
                                 <productName>Overtok</productName>
                                 <internalName>overtok</internalName>
                                 <originalFilename>overtok.exe</originalFilename>
@@ -139,10 +139,10 @@
                             <server>github-oauth</server>
                             <owner>withertech</owner>
                             <repository>Overtok</repository>
-                            <tagName>v1.0.0.0</tagName>
-                            <name>Initial Release</name>
+                            <tagName>v1.1.1.0</tagName>
+                            <name>Release 2</name>
                             <targetCommitish>master</targetCommitish>
-                            <body>Initial Release</body>
+                            <body>Better Setup Installer and Full Dump</body>
                             <assets>
                                 <asset>target/OvertokSetup.exe</asset>
                             </assets>
