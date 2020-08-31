@@ -49,18 +49,42 @@ var
   ApiKeyPage: TInputQueryWizardPage;
 
 procedure InitializeWizard();
+var
+  Link: TLabel;
 begin
   ApiKeyPage :=
     CreateInputQueryPage(wpWelcome,
     'Tik Tok Api Key', 
     '',
     'Please Enter Your Tik Tok Api Key That Can Be Purchased At: https://rapidapi.com/logicbuilder/api/tiktok/pricing');
+    Link := TLabel.Create(WizardForm);
+    Link.Left := ???;
+    Link.Top := ???;
+    Link.Parent := WizardForm.WelcomePage;
+    Link.Caption := 'CLICK_HERE';
+    Link.OnClick := @LinkClick;
+    Link.ParentFont := True;
+    Link.Font.Style := Link.Font.Style + [fsUnderline, fsBold];
+    Link.Font.Color := clBlue;
+    Link.Cursor := crHand;
   ApiKeyPage.Add('Tik Tok Api Key:', true);
 end;
 
 function ApiKey(): string;
 begin
   Result := ApiKeyPage.Values[0];
+end;
+
+procedure OpenBrowser(Url: string);
+var
+  ErrorCode: Integer;
+begin
+  ShellExec('open', Url, '', '', SW_SHOWNORMAL, ewNoWait, ErrorCode);
+end;
+
+procedure LinkClick(Sender: TObject);
+begin
+  OpenBrowser('https://www.example.com/');
 end;
 
 procedure PrepareIniFileForCopy(section, key, value, iniFileTemp, iniFileTarget:String);
