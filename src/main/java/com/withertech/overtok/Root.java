@@ -1,46 +1,48 @@
 package com.withertech.overtok;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.withertech.overtok.Components.JFilePicker;
 import org.ini4j.Ini;
-import org.ini4j.InvalidFileFormatException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Root
 {
-    private JPanel rootPanel;
-    private JTextField User1TextField;
-    private JTextField User2TextField;
-    private JList UserFollowerOverlapList;
-    private JLabel User1Label;
-    private JLabel User2Label;
-    private JScrollBar ScrollBar;
-    private JScrollPane ScrollPane;
-    private JButton UserFollowerOverlapButton;
-    private JPanel constraintPanel;
-    private JLabel OverlapListStatus;
-    private Ini ini;
-    private HttpResponse<JsonNode> response1;
-    private HttpResponse<JsonNode> response2;
-    private String json1;
-    private String json2;
-    private JSONObject root1;
-    private JSONObject root2;
+    public JPanel rootPanel;
+    public JTextField User1TextField;
+    public JTextField User2TextField;
+    public JList<Object> UserFollowerOverlapList;
+    public JLabel User1Label;
+    public JLabel User2Label;
+    public JScrollBar ScrollBar;
+    public JScrollPane ScrollPane;
+    public JButton UserFollowerOverlapButton;
+    public JPanel constraintPanel;
+    public JLabel OverlapListStatus;
+    public Ini ini;
+    public HttpResponse<JsonNode> response1;
+    public HttpResponse<JsonNode> response2;
+    public String json1;
+    public String json2;
+    public JSONObject root1;
+    public JSONObject root2;
+    public JSONObject root3;
+    private JFilePicker OutputPicker;
+    private JLabel OutputLabel;
+    private JFilePicker OutputFilePicker;
 
     public Root()
     {
@@ -48,7 +50,7 @@ public class Root
         {
             public void actionPerformed(ActionEvent e)
             {
-                if (!(User1TextField.getText().isEmpty() && User2TextField.getText().isEmpty()))
+                if ((!User1TextField.getText().isEmpty() && !User2TextField.getText().isEmpty() && OutputFilePicker.outputDirectory != null))
                 {
                     try
                     {
@@ -65,9 +67,9 @@ public class Root
                                 .asJson();
                         json2 = response2.getBody().toString();
                         root2 = new JSONObject(json2);
-                        if(root1.has("message") | root2.has("message"))
+                        if (root1.has("message") | root2.has("message"))
                         {
-                            OverlapListStatus.setText("Request Quota Reached!");
+                            OverlapListStatus.setText(root1.has("message") ? root1.getString("message") : root2.getString("message"));
                             return;
                         }
                         do
@@ -79,9 +81,9 @@ public class Root
                                     .asJson();
                             json1 = response1.getBody().toString();
                             root1 = root1.put("followers", JoinArrays(root1.getJSONArray("followers"), new JSONObject(json1).getJSONArray("followers")));
-                            if(root1.has("message"))
+                            if (root1.has("message"))
                             {
-                                OverlapListStatus.setText("Request Quota Reached!");
+                                OverlapListStatus.setText(root1.getString("message"));
                                 return;
                             }
 
@@ -95,42 +97,66 @@ public class Root
                                     .asJson();
                             json2 = response2.getBody().toString();
                             root2 = root2.put("followers", JoinArrays(root2.getJSONArray("followers"), new JSONObject(json2).getJSONArray("followers")));
-                            if(root2.has("message"))
+                            if (root2.has("message"))
                             {
-                                OverlapListStatus.setText("Request Quota Reached!");
+                                OverlapListStatus.setText(root2.getString("message"));
                                 return;
                             }
 
                         } while (root2.getBoolean("has_more"));
-                        PrintWriter writer1 = new PrintWriter("User1.json","UTF-8");
+                        root3 = new JSONObject("{\n" +
+                                "  \"has_more\": false,\n" +
+                                "  \"total_followers\": 0,\n" +
+                                "  \"followers\": [\n" +
+                                "\n" +
+                                "  ]\n" +
+                                "}");
+                        PrintWriter writer1 = new PrintWriter(OutputPicker.outputDirectory.getPath() + "User1.json", "UTF-8");
                         writer1.print(root1.toString(4));
                         writer1.close();
-                        PrintWriter writer2 = new PrintWriter("User2.json","UTF-8");
+                        PrintWriter writer2 = new PrintWriter(OutputPicker.outputDirectory.getPath() + "User2.json", "UTF-8");
                         writer2.print(root2.toString(4));
                         writer2.close();
-                        if (root1.has("followers") && root2.has("followers"))
+                        if (root1.has("followers") && root2.has("followers") && root3.has("followers"))
                         {
+
                             JSONArray followers1 = root1.getJSONArray("followers");
                             JSONArray followers2 = root2.getJSONArray("followers");
-                            List<String> overlappedFollowersList = new ArrayList<String>();
+                            List<String> overlappedFollowersList = new ArrayList<>();
                             for (int i1 = 0; i1 < followers1.length(); i1++)
                             {
-                                for (int i2 = 0; i2 < followers1.length(); i2++)
+                                for (int i2 = 0; i2 < followers2.length(); i2++)
                                 {
                                     if (followers1.getJSONObject(i1).getString("unique_id").equals(followers2.getJSONObject(i2).getString("unique_id")))
                                     {
                                         overlappedFollowersList.add(followers1.getJSONObject(i1).getString("unique_id"));
+                                        if (!root3.getJSONArray("followers").isEmpty())
+                                        {
+                                            root3 = root3.put("followers", root3.getJSONArray("followers").put(followers1.getJSONObject(i1)));
+                                        }
+                                        else
+                                        {
+                                            root3 = root3.put("followers", new JSONArray().put(followers1.getJSONObject(i1)));
+                                        }
                                     }
                                 }
                             }
+                            root3 = root3.put("total_followers", overlappedFollowersList.size());
+                            PrintWriter writer3 = new PrintWriter(OutputPicker.outputDirectory.getPath() + "User3.json", "UTF-8");
+                            writer3.print(root3.toString(4));
+                            writer3.close();
                             UserFollowerOverlapList.setListData(overlappedFollowersList.toArray());
-                            OverlapListStatus.setText("Total Amount of Overlapping Followers: " + overlappedFollowersList.size());
+                            OverlapListStatus.setText("Total User1: " + overlappedFollowersList.size() + "/" + root1.getInt("total_followers") + " Total User2: " + overlappedFollowersList.size() + "/" + root2.getInt("total_followers"));
                         }
 
                     } catch (UnirestException | JSONException | IOException ee)
                     {
                         ee.printStackTrace();
                     }
+                }
+                else if (OutputFilePicker.outputDirectory == null)
+                {
+                    OverlapListStatus.setText("Error: Invalid output path");
                 }
                 else
                 {
@@ -141,15 +167,20 @@ public class Root
             }
         });
     }
-    public static JSONArray JoinArrays(JSONArray... jsonArrays) {
+
+    public static JSONArray JoinArrays(JSONArray... jsonArrays)
+    {
         JSONArray result = new JSONArray();
-        for (JSONArray arr : jsonArrays) {
-            for (int i = 0; i < arr.length(); i++) {
+        for (JSONArray arr : jsonArrays)
+        {
+            for (int i = 0; i < arr.length(); i++)
+            {
                 result.put(arr.get(i));
             }
         }
         return result;
     }
+
     public static void main(String[] args)
     {
         try

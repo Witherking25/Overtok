@@ -18,7 +18,7 @@
     </repositories>
     <groupId>com.withertech</groupId>
     <artifactId>overtok</artifactId>
-    <version>1.0.0</version>
+    <version>1.2.1.0</version>
     <build>
         <plugins>
             <plugin>
@@ -81,7 +81,7 @@
                         <configuration>
                             <headerType>gui</headerType>
                             <outfile>target/overtok.exe</outfile>
-                            <jar>target/overtok-1.0.0-jar-with-dependencies.jar</jar>
+                            <jar>target/overtok-1.2.1.0-jar-with-dependencies.jar</jar>
                             <errTitle>overtok</errTitle>
                             <classPath>
                                 <mainClass>com.withertech.overtok.Root</mainClass>
@@ -95,12 +95,12 @@
                                 </opts>
                             </jre>
                             <versionInfo>
-                                <fileVersion>1.1.1.0</fileVersion>
-                                <txtFileVersion>1.1.1.0</txtFileVersion>
+                                <fileVersion>1.2.1.0</fileVersion>
+                                <txtFileVersion>1.2.1.0</txtFileVersion>
                                 <fileDescription>Tik Tok follower overlap scraper</fileDescription>
                                 <copyright>none</copyright>
-                                <productVersion>1.1.1.0</productVersion>
-                                <txtProductVersion>1.1.1.0</txtProductVersion>
+                                <productVersion>1.2.1.0</productVersion>
+                                <txtProductVersion>1.2.1.0</txtProductVersion>
                                 <productName>Overtok</productName>
                                 <internalName>overtok</internalName>
                                 <originalFilename>overtok.exe</originalFilename>
@@ -139,10 +139,10 @@
                             <server>github-oauth</server>
                             <owner>withertech</owner>
                             <repository>Overtok</repository>
-                            <tagName>v1.1.1.0</tagName>
-                            <name>Release 2</name>
+                            <tagName>v1.2.1.0</tagName>
+                            <name>Release 3</name>
                             <targetCommitish>master</targetCommitish>
-                            <body>Better Setup Installer and Full Dump</body>
+                            <body>Saving Output And File Picker For Output Directory</body>
                             <assets>
                                 <asset>target/OvertokSetup.exe</asset>
                             </assets>

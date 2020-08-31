@@ -9,5 +9,8 @@
         <module name="Overtok" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Overtok" target="7" />
+    </bytecodeTargetLevel>
   </component>
 </project>
