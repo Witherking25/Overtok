@@ -16,10 +16,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -68,28 +65,49 @@ public class Root
                                 .asJson();
                         json2 = response2.getBody().toString();
                         root2 = new JSONObject(json2);
-//                        do
-//                        {
-//
-//                            response1 = Unirest.get("https://tiktok.p.rapidapi.com/live/user/follower/list?username=" + User1TextField.getText() + "&max_cursor=" + root1.getString("max_cursor") + "&limit=200")
-//                                    .header("x-rapidapi-host", "tiktok.p.rapidapi.com")
-//                                    .header("x-rapidapi-key", ini.get("Keys", "ApiKey"))
-//                                    .asJson();
-//                            json1 = response1.getBody().toString();
-//                            root1 = root1.put("followers", JoinArrays(root1.getJSONArray("followers"), new JSONObject(json1).getJSONArray("followers")));
-//
-//                        } while (root1.getBoolean("has_more"));
-//                        do
-//                        {
-//
-//                            response2 = Unirest.get("https://tiktok.p.rapidapi.com/live/user/follower/list?username=" + User2TextField.getText() + "&max_cursor=" + root2.getString("max_cursor") + "&limit=200")
-//                                    .header("x-rapidapi-host", "tiktok.p.rapidapi.com")
-//                                    .header("x-rapidapi-key", ini.get("Keys", "ApiKey"))
-//                                    .asJson();
-//                            json2 = response2.getBody().toString();
-//                            root2 = root2.put("followers", JoinArrays(root2.getJSONArray("followers"), new JSONObject(json2).getJSONArray("followers")));
-//
-//                        } while (root2.getBoolean("has_more"));
+                        if(root1.has("message") | root2.has("message"))
+                        {
+                            OverlapListStatus.setText("Request Quota Reached!");
+                            return;
+                        }
+                        do
+                        {
+
+                            response1 = Unirest.get("https://tiktok.p.rapidapi.com/live/user/follower/list?username=" + User1TextField.getText() + "&max_cursor=" + root1.getString("max_cursor") + "&limit=200")
+                                    .header("x-rapidapi-host", "tiktok.p.rapidapi.com")
+                                    .header("x-rapidapi-key", ini.get("Keys", "ApiKey"))
+                                    .asJson();
+                            json1 = response1.getBody().toString();
+                            root1 = root1.put("followers", JoinArrays(root1.getJSONArray("followers"), new JSONObject(json1).getJSONArray("followers")));
+                            if(root1.has("message"))
+                            {
+                                OverlapListStatus.setText("Request Quota Reached!");
+                                return;
+                            }
+
+                        } while (root1.getBoolean("has_more"));
+                        do
+                        {
+
+                            response2 = Unirest.get("https://tiktok.p.rapidapi.com/live/user/follower/list?username=" + User2TextField.getText() + "&max_cursor=" + root2.getString("max_cursor") + "&limit=200")
+                                    .header("x-rapidapi-host", "tiktok.p.rapidapi.com")
+                                    .header("x-rapidapi-key", ini.get("Keys", "ApiKey"))
+                                    .asJson();
+                            json2 = response2.getBody().toString();
+                            root2 = root2.put("followers", JoinArrays(root2.getJSONArray("followers"), new JSONObject(json2).getJSONArray("followers")));
+                            if(root2.has("message"))
+                            {
+                                OverlapListStatus.setText("Request Quota Reached!");
+                                return;
+                            }
+
+                        } while (root2.getBoolean("has_more"));
+                        PrintWriter writer1 = new PrintWriter("User1.json","UTF-8");
+                        writer1.print(root1.toString(4));
+                        writer1.close();
+                        PrintWriter writer2 = new PrintWriter("User2.json","UTF-8");
+                        writer2.print(root2.toString(4));
+                        writer2.close();
                         if (root1.has("followers") && root2.has("followers"))
                         {
                             JSONArray followers1 = root1.getJSONArray("followers");
