@@ -18,7 +18,7 @@
     </repositories>
     <groupId>com.withertech</groupId>
     <artifactId>overtok</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.1.0</version>
     <build>
         <plugins>
             <plugin>
