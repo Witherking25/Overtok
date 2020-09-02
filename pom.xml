@@ -140,7 +140,7 @@
                             <owner>withertech</owner>
                             <repository>Overtok</repository>
                             <tagName>v1.3.0.0</tagName>
-                            <name>Release 3</name>
+                            <name>Release 4</name>
                             <targetCommitish>master</targetCommitish>
                             <body>Json Syntax Highlighted Text Representation and Tree Representation Of Output</body>
                             <assets>
