@@ -80,8 +80,6 @@ public class Root
                     {
                         if (!debug)
                         {
-                            boolean loop1 = true;
-                            boolean loop2 = true;
                             ini = new Ini(new File(System.getProperty("user.dir") + "/overtok.ini"));
                             response1 = Unirest.get("https://tiktok.p.rapidapi.com/live/user/follower/list?username=" + User1TextField.getText() + "&max_cursor=0&limit=200")
                                     .header("x-rapidapi-host", "tiktok.p.rapidapi.com")
@@ -102,7 +100,7 @@ public class Root
                                 OverlapListStatus.setText(root1.has("message") ? root1.getString("message") : root2.getString("message"));
                                 return;
                             }
-                            do
+                            while (true)
                             {
 
                                 response1 = Unirest.get("https://tiktok.p.rapidapi.com/live/user/follower/list?username=" + User1TextField.getText() + "&max_cursor=" + root1.getString("max_cursor") + "&limit=200")
@@ -124,8 +122,8 @@ public class Root
                                     return;
                                 }
 
-                            } while (true);
-                            do
+                            }
+                            while (true)
                             {
 
                                 response2 = Unirest.get("https://tiktok.p.rapidapi.com/live/user/follower/list?username=" + User2TextField.getText() + "&max_cursor=" + root2.getString("max_cursor") + "&limit=200")
@@ -140,7 +138,7 @@ public class Root
                                 }
                                 root2 = root2.put("followers", JoinArrays(root2.getJSONArray("followers"), new JSONObject(json2).getJSONArray("followers")));
                                 root2 = root2.put("max_cursor", new JSONObject(json2).getString("max_cursor"));
-                                root2 = root2.put("has_more", new JSONObject(json1).getBoolean("has_more"));
+                                root2 = root2.put("has_more", new JSONObject(json2).getBoolean("has_more"));
                                 System.out.println(root2.toString(4));
                                 if (root2.has("message"))
                                 {
@@ -148,7 +146,7 @@ public class Root
                                     return;
                                 }
 
-                            } while (true);
+                            }
                         }
                         if (debug)
                         {
@@ -184,8 +182,7 @@ public class Root
                                         if (!root3.getJSONArray("followers").isEmpty())
                                         {
                                             root3 = root3.put("followers", root3.getJSONArray("followers").put(followers1.getJSONObject(i1)));
-                                        }
-                                        else
+                                        } else
                                         {
                                             root3 = root3.put("followers", new JSONArray().put(followers1.getJSONObject(i1)));
                                         }
@@ -211,12 +208,10 @@ public class Root
                     {
                         ee.printStackTrace();
                     }
-                }
-                else if (OutputFilePicker.outputDirectory == null)
+                } else if (OutputFilePicker.outputDirectory == null)
                 {
                     OverlapListStatus.setText("Error: Invalid output path");
-                }
-                else
+                } else
                 {
                     OverlapListStatus.setText("Error: Missing inputs");
                 }
@@ -233,8 +228,7 @@ public class Root
                 {
                     setTreeExpandedState(UserFollowerOverlapJsonTree, false);
                     Expanded = false;
-                }
-                else
+                } else
                 {
                     setTreeExpandedState(UserFollowerOverlapJsonTree, true);
                     Expanded = true;
@@ -268,8 +262,7 @@ public class Root
         if (expanded)
         {
             tree.expandPath(path);
-        }
-        else
+        } else
         {
             tree.collapsePath(path);
         }
@@ -302,8 +295,7 @@ public class Root
                 rootNode.add(treeNode);
                 traverseJSONObject(jsonGenerator, treeNode, rootJson.getJSONObject(keyString));
                 jsonGenerator.writeEndObject();
-            }
-            else if (keyValue instanceof JSONArray)
+            } else if (keyValue instanceof JSONArray)
             {
                 jsonGenerator.writeArrayFieldStart(keyString);
                 DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode("Array: " + keyString);
@@ -329,22 +321,19 @@ public class Root
                 itemNode.add(treeNode);
                 traverseJSONObject(jsonGenerator, treeNode, itemJson.getJSONObject(keyString));
                 jsonGenerator.writeEndObject();
-            }
-            else if (keyValue instanceof JSONArray)
+            } else if (keyValue instanceof JSONArray)
             {
                 jsonGenerator.writeStartArray();
                 DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode("Array: " + keyString);
                 itemNode.add(treeNode);
                 traverseJSONArray(jsonGenerator, treeNode, itemJson.getJSONArray(keyString));
                 jsonGenerator.writeEndArray();
-            }
-            else if (keyValue instanceof String)
+            } else if (keyValue instanceof String)
             {
                 DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode(keyString + " : \"" + itemJson.getString(keyString) + "\"");
                 itemNode.add(treeNode);
                 jsonGenerator.writeStringField(keyString, itemJson.getString(keyString));
-            }
-            else if (keyValue instanceof Integer)
+            } else if (keyValue instanceof Integer)
             {
                 DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode(keyString + " : " + itemJson.getInt(keyString));
                 itemNode.add(treeNode);
@@ -365,22 +354,19 @@ public class Root
                 itemNode.add(treeNode);
                 traverseJSONObject(jsonGenerator, treeNode, itemJson.getJSONObject(i));
                 jsonGenerator.writeEndObject();
-            }
-            else if (keyValue instanceof JSONArray)
+            } else if (keyValue instanceof JSONArray)
             {
                 jsonGenerator.writeStartArray();
                 DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode("Array");
                 itemNode.add(treeNode);
                 traverseJSONArray(jsonGenerator, treeNode, itemJson.getJSONArray(i));
                 jsonGenerator.writeEndArray();
-            }
-            else if (keyValue instanceof String)
+            } else if (keyValue instanceof String)
             {
                 DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode("\"" + itemJson.getString(i) + "\"");
                 itemNode.add(treeNode);
                 jsonGenerator.writeString(itemJson.getString(i));
-            }
-            else if (keyValue instanceof Integer)
+            } else if (keyValue instanceof Integer)
             {
                 DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode(itemJson.getInt(i));
                 itemNode.add(treeNode);
@@ -405,4 +391,109 @@ public class Root
         frame.setVisible(true);
     }
 
+    {
+// GUI initializer generated by IntelliJ IDEA GUI Designer
+// >>> IMPORTANT!! <<<
+// DO NOT EDIT OR ADD ANY CODE HERE!
+        $$$setupUI$$$();
+    }
+
+    /**
+     * Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     *
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$()
+    {
+        rootPanel = new JPanel();
+        rootPanel.setLayout(new GridLayoutManager(9, 1, new Insets(0, 0, 0, 0), -1, -1));
+        constraintPanel = new JPanel();
+        constraintPanel.setLayout(new GridLayoutManager(9, 1, new Insets(0, 0, 0, 0), -1, -1));
+        rootPanel.add(constraintPanel, new GridConstraints(0, 0, 9, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(800, 800), null, new Dimension(800, 800), 0, false));
+        User1Label = new JLabel();
+        User1Label.setText("User 1 Name");
+        constraintPanel.add(User1Label, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        User1TextField = new JTextField();
+        constraintPanel.add(User1TextField, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        User2Label = new JLabel();
+        User2Label.setText("User 2 Name");
+        constraintPanel.add(User2Label, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        User2TextField = new JTextField();
+        constraintPanel.add(User2TextField, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        OutputLabel = new JLabel();
+        OutputLabel.setText("Output Directory");
+        constraintPanel.add(OutputLabel, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        OutputFilePicker = new JFilePicker();
+        constraintPanel.add(OutputFilePicker.$$$getRootComponent$$$(), new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        UserFollowerOverlapButton = new JButton();
+        UserFollowerOverlapButton.setText("Start");
+        constraintPanel.add(UserFollowerOverlapButton, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        OverlapListStatus = new JLabel();
+        OverlapListStatus.setText("Ready");
+        constraintPanel.add(OverlapListStatus, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        OutputPane = new JTabbedPane();
+        constraintPanel.add(OutputPane, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(200, 200), null, 0, false));
+        UserFollowerOverlapListPanel = new JPanel();
+        UserFollowerOverlapListPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+        OutputPane.addTab("List", UserFollowerOverlapListPanel);
+        UserFollowerOverlapListScrollPane = new JScrollPane();
+        UserFollowerOverlapListPanel.add(UserFollowerOverlapListScrollPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        UserFollowerOverlapList = new JList();
+        UserFollowerOverlapListScrollPane.setViewportView(UserFollowerOverlapList);
+        UserFollowerOverlapListScrollBar = new JScrollBar();
+        UserFollowerOverlapListPanel.add(UserFollowerOverlapListScrollBar, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        UserFollowerOverlapJsonPanel = new JPanel();
+        UserFollowerOverlapJsonPanel.setLayout(new GridBagLayout());
+        OutputPane.addTab("Json", UserFollowerOverlapJsonPanel);
+        UserFollowerOverlapJsonTreeScrollPane = new JScrollPane();
+        UserFollowerOverlapJsonTreeScrollPane.setHorizontalScrollBarPolicy(30);
+        UserFollowerOverlapJsonTreeScrollPane.setVerticalScrollBarPolicy(20);
+        GridBagConstraints gbc;
+        gbc = new GridBagConstraints();
+        gbc.gridx = 3;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        UserFollowerOverlapJsonPanel.add(UserFollowerOverlapJsonTreeScrollPane, gbc);
+        UserFollowerOverlapJsonTree = new JTree();
+        UserFollowerOverlapJsonTreeScrollPane.setViewportView(UserFollowerOverlapJsonTree);
+        UserFollowerOverlapJsonTextScrollPane = new JScrollPane();
+        UserFollowerOverlapJsonTextScrollPane.setDoubleBuffered(false);
+        UserFollowerOverlapJsonTextScrollPane.setHorizontalScrollBarPolicy(30);
+        UserFollowerOverlapJsonTextScrollPane.setName("");
+        UserFollowerOverlapJsonTextScrollPane.setVerticalScrollBarPolicy(20);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 3;
+        gbc.gridheight = 2;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        UserFollowerOverlapJsonPanel.add(UserFollowerOverlapJsonTextScrollPane, gbc);
+        UserFollowerOverlapJsonTextPane = new JColorPane();
+        UserFollowerOverlapJsonTextPane.setEditable(false);
+        UserFollowerOverlapJsonTextScrollPane.setViewportView(UserFollowerOverlapJsonTextPane);
+        UserFollowerOverlapJsonTreeToggle = new JButton();
+        UserFollowerOverlapJsonTreeToggle.setText("Expand/Collapse Tree");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 3;
+        gbc.gridy = 1;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        UserFollowerOverlapJsonPanel.add(UserFollowerOverlapJsonTreeToggle, gbc);
+        UserFollowerOverlapListScrollPane.setVerticalScrollBar(UserFollowerOverlapListScrollBar);
+    }
+
+    /**
+     * @noinspection ALL
+     */
+    public JComponent $$$getRootComponent$$$()
+    {
+        return rootPanel;
+    }
 }
